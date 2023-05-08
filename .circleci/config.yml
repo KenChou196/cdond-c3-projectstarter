@@ -47,6 +47,8 @@ jobs:
             # exit 1
             cd frontend
             npm install
+            npm audit fix --audit-level=critical --force
+            npm audit fix --force
             npm run build
       - save_cache:
           paths: [frontend/node_modules]
@@ -99,7 +101,7 @@ jobs:
       - checkout
       # Restore from cache
       # Your job code here
-      
+
   scan-frontend:
     docker:
       # Docker image here
@@ -126,7 +128,15 @@ jobs:
       # Checkout code from git
       - checkout
       # Restore from cache
-      # Your job code here
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Front-end scan
+          # Your job code here
+          command: |
+            cd backend
+            npm install
+            npm audit --audit-level=critical
 
   deploy-infrastructure:
     docker:
