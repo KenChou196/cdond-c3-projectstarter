@@ -63,7 +63,7 @@ jobs:
           name: Back-end build
           command: |
             # Your code here
-            npm login
+            # npm login
             npm install
             npm run build
             # exit 1
