@@ -64,6 +64,7 @@ jobs:
           command: |
             # Your code here
             # npm login
+            cd backend
             npm install
             npm run build
             # exit 1
