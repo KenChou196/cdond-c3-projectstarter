@@ -47,8 +47,6 @@ jobs:
             # exit 1
             cd frontend
             npm install
-            npm audit fix --audit-level=critical --force
-            npm audit fix --force
             npm run build
       - save_cache:
           paths: [frontend/node_modules]
