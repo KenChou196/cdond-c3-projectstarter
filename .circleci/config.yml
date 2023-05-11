@@ -9,8 +9,6 @@ commands:
       job-name:
         default: "slack push notification"
         type: string
-    docker:
-      - image: cimg/base:stable
     steps:
       - slack/notify:
           custom: |
