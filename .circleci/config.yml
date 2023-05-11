@@ -103,8 +103,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      # - restore_cache:
-      #     keys: [frontend-build]
+      - restore_cache:
+          keys: [frontend-build]
       - run:
           name: Build front-end
           command: |
@@ -384,12 +384,12 @@ cleanup:
           fi
 
 workflows:
-  send-notification:
-    jobs:
-      - notify
-  # default:
+  # send-notification:
   #   jobs:
-      # - build-frontend
+  #     - notify
+  default:
+    jobs:
+      - build-frontend
       # - build-backend
       # - test-frontend:
       #     requires: [build-frontend]
