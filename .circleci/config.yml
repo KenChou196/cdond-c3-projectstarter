@@ -78,7 +78,8 @@ commands:
 jobs:
   notify:
     docker:
-      - image: cimg/base:stable
+      - image: circleci/node:13.8.0
+      # - image: cimg/base:stable
     steps:
       - slack/notify:
           custom: |
@@ -98,10 +99,8 @@ jobs:
             }
           event: always
   build-frontend:
-    # docker:
-    #   - image: circleci/node:13.8.0
-    executor:
-      name: node/default
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -114,11 +113,11 @@ jobs:
             cd frontend
             npm install
             npm run build
+      - slack-notification:
+           job-name: 'build front end job'
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
-      - slack-notification:
-           job-name: 'build front end job'
   build-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -385,12 +384,12 @@ cleanup:
           fi
 
 workflows:
-  # send-notification:
-  #   jobs:
-  #     - notify
-  default:
+  send-notification:
     jobs:
-      - build-frontend
+      - notify
+  # default:
+  #   jobs:
+  #     - build-frontend
       # - build-backend
       # - test-frontend:
       #     requires: [build-frontend]
