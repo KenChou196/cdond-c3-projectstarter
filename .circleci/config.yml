@@ -1,6 +1,50 @@
 version: 2.1
+# add slack
+orbs:
+  slack: circleci/slack@4.10.1
 
 commands:
+  slack-notification-for-jobs:
+    parameters:
+      job-name:
+        default: "slack push notification"
+        type: string
+    steps:
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "The <<parameters.job-name>> jobs has been success in deploy id ${CIRCLE_WORKFLOW_ID:0:7}",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: pass
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "The <<parameters.job-name>> has been failed",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: fail
+
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     # parameters:
@@ -51,7 +95,8 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
-
+      - slack-notification-for-jobs:
+          job-name: "automation build-frontend job"
   build-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -132,15 +177,19 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [backend-build]
+          keys: [scan-backend]
       - run:
           name: Front-end scan
           # Your job code here
           command: |
             cd backend
             npm install
+            npm audit fix --audit-level=critical --force
+            npm audit fix --force
             npm audit --audit-level=critical
-
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: scan-backend
   deploy-infrastructure:
     docker:
       - image: circleci/node:13.8.0
