@@ -1,8 +1,8 @@
 version: 2.1
 # add slack
 orbs:
-  slack: circleci/slack@4.10.1
-
+  slack: circleci/slack@4.12.5
+  node: circleci/node@5.1.0
 commands:
   slack-notification:
     parameters:
@@ -98,8 +98,10 @@ jobs:
             }
           event: always
   build-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    # docker:
+    #   - image: circleci/node:13.8.0
+    executor:
+      name: node/default
     steps:
       - checkout
       - restore_cache:
