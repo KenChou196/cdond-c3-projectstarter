@@ -5,8 +5,6 @@ orbs:
 
 commands:
   slack-notification:
-    docker:
-      - image: cimg/base:stable
     parameters:
       job-name:
         default: "Job Name"
