@@ -386,9 +386,11 @@ cleanup:
           fi
 
 workflows:
-  default:
+  send-notification:
     jobs:
       - notify
+  # default:
+  #   jobs:
       # - build-frontend
       # - build-backend
       # - test-frontend:
