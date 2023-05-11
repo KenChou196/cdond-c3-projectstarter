@@ -4,6 +4,48 @@ orbs:
   slack: circleci/slack@4.1
 
 commands:
+  slack-notification:
+    docker:
+      - image: cimg/base:stable
+    parameters:
+      job-name:
+        default: "Job Name"
+        type: string
+    steps:
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "The <<parameters.job-name>> jobs has been success in deploy id ${CIRCLE_WORKFLOW_ID:0:7}",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: pass
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "The <<parameters.job-name>> has been failed",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: fail
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     # parameters:
@@ -75,23 +117,8 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
-      - slack/notify:
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "*This is a text notification*",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-          event: always
+      - slack-notification:
+           job-name: 'build front end job'
   build-backend:
     docker:
       - image: circleci/node:13.8.0
