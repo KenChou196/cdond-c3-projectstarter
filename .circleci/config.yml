@@ -4,47 +4,6 @@ orbs:
   slack: circleci/slack@4.1
 
 commands:
-  slack-notification-for-jobs:
-    parameters:
-      job-name:
-        default: "slack push notification"
-        type: string
-    steps:
-      - slack/notify:
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "The <<parameters.job-name>> jobs has been success in deploy id ${CIRCLE_WORKFLOW_ID:0:7}",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-          event: pass
-      - slack/notify:
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "The <<parameters.job-name>> has been failed",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-          event: fail
-
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     # parameters:
@@ -116,8 +75,12 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
-      - slack-notification-for-jobs:
-          job-name: "automation build-frontend job"
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
   build-backend:
     docker:
       - image: circleci/node:13.8.0
