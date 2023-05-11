@@ -1,8 +1,7 @@
 version: 2.1
 # add slack
 orbs:
-  slack: circleci/slack@4.12.5
-  node: circleci/node@5.1.0
+  slack: circleci/slack@4.10.1
 commands:
   slack-notification:
     parameters:
