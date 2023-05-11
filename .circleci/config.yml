@@ -1,7 +1,7 @@
 version: 2.1
 # add slack
 orbs:
-  slack: circleci/slack@4.10.1
+  slack: circleci/slack@4.1
 
 commands:
   slack-notification-for-jobs:
@@ -9,6 +9,8 @@ commands:
       job-name:
         default: "slack push notification"
         type: string
+    docker:
+      - image: cimg/base:stable
     steps:
       - slack/notify:
           custom: |
@@ -77,6 +79,27 @@ commands:
             fi
 
 jobs:
+  notify:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "*This is a text notification*",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: always
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -365,7 +388,8 @@ cleanup:
 workflows:
   default:
     jobs:
-      - build-frontend
+      - notify
+      # - build-frontend
       # - build-backend
       # - test-frontend:
       #     requires: [build-frontend]
@@ -373,8 +397,8 @@ workflows:
       #     requires: [build-backend]
       # - scan-backend:
       #     requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
       # - deploy-infrastructure:
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
