@@ -99,7 +99,7 @@ jobs:
           event: always
   build-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
       - restore_cache:
@@ -113,7 +113,7 @@ jobs:
             npm install
             npm run build
       - slack-notification:
-           job-name: 'build front end job'
+           job-name: '=====> build front end job'
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
