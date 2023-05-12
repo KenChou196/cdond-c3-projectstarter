@@ -45,7 +45,7 @@ commands:
           event: fail
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    -parameters:
+    parameters:
       workflow_id:
         default: "${CIRCLE_WORKFLOW_ID:0:7}"
         type: string
