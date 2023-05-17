@@ -347,12 +347,15 @@ jobs:
   run-migrations:
     docker:
       # Docker image here that supports NodeJS
-      - image: circleci/node:13.8.0
+      # - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       # Checkout code from git
       - checkout
       - attach_workspace:
           at: ~/
+      - install_node13
+      - install_awscli
       - run:
           name: Install dependencies
           command: |
