@@ -15,10 +15,11 @@
     ls -la
 
 - name: Install Node
-  shell: |
-    cd /home/ubuntu/backend
-    npm install
-    npm install --only=dev
+  become: yes
+  apt:
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
 
 - name: Build package
   shell: |
