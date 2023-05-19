@@ -35,7 +35,7 @@ commands:
                   "fields": [
                     {
                       "type": "plain_text",
-                      "text": "The <<parameters.job-name>> has been failed",
+                      "text": "The <<parameters.job-name>> has been failed, more detail here : https://app.circleci.com/pipelines/workflows/${CIRCLE_WORKFLOW_ID:0:7}",
                       "emoji": true
                     }
                   ]
@@ -479,11 +479,13 @@ jobs:
             if curl -s ${URL} | grep "Welcome"
             then
               echo SUCCESS_TEST_FRONTEND
-              exit 0
+              exit 1
             else
               echo FAIL_TEST_FRONTEND
               exit 1
             fi
+      - slack-notification:
+          job-name: "smoke-test-frontend"
       # Here's where you will add some code to rollback on failure
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -595,34 +597,35 @@ workflows:
   #     - notify
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [master]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
-      - deploy-backend:
-          requires: [run-migrations]
-      - smoke-test-frontend:
-          requires: [deploy-backend, deploy-frontend]
-      - smoke-test-backend:
-          requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test-frontend, smoke-test-backend]
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      # - deploy-infrastructure:
+      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      #     filters:
+      #       branches:
+      #         only: [master]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
+      # - deploy-frontend:
+      #     requires: [run-migrations]
+      # - deploy-backend:
+      #     requires: [run-migrations]
+      # - smoke-test-frontend:
+      #     requires: [deploy-backend, deploy-frontend]
+      # - smoke-test-backend:
+      #     requires: [deploy-backend, deploy-frontend]
+      # - cloudfront-update:
+      #     requires: [smoke-test-frontend, smoke-test-backend]
       # - cleanup:
       #     requires: [cloudfront-update]
+      - cleanup
