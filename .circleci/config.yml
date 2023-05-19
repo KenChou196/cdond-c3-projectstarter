@@ -35,7 +35,7 @@ commands:
                   "fields": [
                     {
                       "type": "plain_text",
-                      "text": "The <<parameters.job-name>> has been failed, more detail here : https://app.circleci.com/pipelines/workflows/${CIRCLE_WORKFLOW_ID:0:7}",
+                      "text": "The <<parameters.job-name>> has been failed, more detail here : https://app.circleci.com/pipelines/github/KenChou196/cdond-c3-projectstarter/82/workflows/${CIRCLE_WORKFLOW_ID}",
                       "emoji": true
                     }
                   ]
@@ -487,10 +487,10 @@ jobs:
       - slack-notification:
           job-name: "smoke-test-frontend"
       # Here's where you will add some code to rollback on failure
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      # - destroy-environment:
+      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      # - revert-migrations:
+      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   smoke-test-backend:
     docker:
@@ -628,4 +628,5 @@ workflows:
       #     requires: [smoke-test-frontend, smoke-test-backend]
       # - cleanup:
       #     requires: [cloudfront-update]
-      - cleanup
+      - smoke-test-frontend
+      # - cleanup
