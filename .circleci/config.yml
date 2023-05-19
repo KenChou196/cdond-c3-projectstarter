@@ -54,6 +54,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
+            aws s3 rm --recursive s3://udapeople-<<parameters.workflow_id>>
             aws s3 rb s3://udapeople-<<parameters.workflow_id>> --force
             aws cloudformation delete-stack --stack-name "udapeople-backend-<<parameters.workflow_id>>"
             aws cloudformation delete-stack --stack-name "udapeople-frontend-<<parameters.workflow_id>>"
@@ -487,10 +488,10 @@ jobs:
       - slack-notification:
           job-name: "smoke-test-frontend"
       # Here's where you will add some code to rollback on failure
-      # - destroy-environment:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-      # - revert-migrations:
-      #     workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   smoke-test-backend:
     docker:
@@ -581,6 +582,7 @@ jobs:
               if [[ "${OldWorkflowID}" != "${CIRCLE_WORKFLOW_ID:0:7}" ]]
               then
                 echo removing resources of OldWorkflowID: "${OldWorkflowID}"
+                aws s3 rm --recursive s3://udapeople-${OldWorkflowID}
                 aws s3 rb --force s3://udapeople-${OldWorkflowID}
                 aws cloudformation delete-stack --stack-name udapeople-backend-${OldWorkflowID}
                 aws cloudformation delete-stack --stack-name udapeople-frontend-${OldWorkflowID}
