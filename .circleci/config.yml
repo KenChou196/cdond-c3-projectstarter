@@ -486,7 +486,7 @@ jobs:
             if curl -s ${URL} | grep "Welcome"
             then
               echo SUCCESS_TEST_FRONTEND
-              exit 0
+              exit 1
             else
               echo FAIL_TEST_FRONTEND
               exit 1
